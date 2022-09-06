@@ -1,4 +1,3 @@
-from email import message
 from django.test import TestCase
 from django.core import mail
 from main.forms import ContactForm

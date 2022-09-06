@@ -1,0 +1,137 @@
+install pipenv:
+        # pip install pipenv
+
+Create a new virtual environment and install django
+        $ mkdir booktime
+        $ cd booktime
+        $ pipenv --three install Django
+
+
+We now have an environment with Django installed. 
+Because virtualenvs need to be activated before being used, we have to do so:
+        $ pipenv shell
+
+Now that it is active, we will create the initial skeleton of the project.
+        $ django-admin startproject booktime .
+
+When you created the Django project a bit earlier, a file called setting.py was initialized.
+it contains constants.Everything in uppercase is considered configuration.How to import this file into our files:
+        django.conf.settings.
+
+
+LOGGING
+Logging is a fundamental part of applications.
+The goal of logging is to save time when problems happen, and to do so you need to be able to track what is happening during runtime.
+Logging is important both for development and for production sites.
+To start with, this LOGGING Django setting is about configuring the logging system using logging.config.dictConfig(). 
+
+STATIC AND MEDIA CONFIGURATION 
+Configuring static files
+        $MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+        $MEDIA_URL = '/media/'
+
+MIDDLEWARE
+Middleware is a powerful feature of Django. It allows you to plug in extra code that will be executed at specific points of the HTTP request/response cycle. 
+An example of this is the SessionMiddleware, which is used to associate sessions to users.
+The order of which middleware components are specified matters. Some middleware components depend on the result of some others, and they would work only in one direction.
+SessionMiddleware and AuthenticationMiddleware provide the basic functionalities for a project that has the concept of user. 
+If you do not have user customizations on the site, you may remove them.
+If you want to use caching on the view layer, you may want to look at the cache middleware. 
+If you will serve content in multiple languages, the LocaleMiddleware class will do the language negotiation between the client and the server. 
+There are many others; look at the Django middleware documentation for more details.
+
+
+DATABASES
+
+Your project will likely use a database to store data. 
+One of the major benefits in using Django instead of a smaller framework is that this aspect is entirely managed for you. 
+This is an initial configuration that uses PostgreSQL for storage:
+PostgreSQL Drivers Installation
+        $pipenv install psycopg2,
+
+DATABASES = {
+        'default': {
+             'ENGINE': 'django.db.backends.postgresql',
+              'NAME': 'mydatabase', 
+              'USER': 'mydatabaseuser',
+              'PASSWORD': 'mypassword',
+              'PORT': '5432',
+            }
+}
+
+GETTING BOOTSTRAP FILES INTO OUR PROJECTS
+        $ mkdir main/static/
+        $ mkdir main/static/css/
+        $ mkdir main/static/js/
+#Bootstrap css
+        $curl -o main/static/css/bootstrap.min.css \https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/cssbootstrap.min.css
+#Jquery.js
+        $ curl -o main/static/js/jquery.min.js \https://code.jquery.com/jquery-3.2.1.slim.min.js
+#Pooper.js
+        $ curl -o main/static/js/popper.min.js \https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umdpopper.min.js
+#Bootstrap js
+        $ curl -o main/static/js/bootstrap.min.js \https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrapmin.js
+
+IMAGES
+For images to function it requires a library called pillow
+        $pipenv install Pillow
+
+DJANGO SIGNALS
+Once an image is created we want a thumbnail to be generated automatically
+And for this to happen we are going to be using signals
+Django signals are like event listeners in javascript
+create a file called signals for eact app and place your signals there
+Once we have created a thumbnail signal we need to make sure that this file is initialized
+when the django application is lauched by the internal django application registry
+The suggested method to do this is adding a method called ready() in the application config inside main/apps.py
+        $This is enough to make sure that signals are registered.
+
+                from django.apps import AppConfig
+                class MainConfig(AppConfig):
+                        name = 'main'
+                        def ready(self):
+                                from . import signals
+
+for user-uploaded files we need the following settings
+                MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+                MEDIA_URL = "/media/"
+
+
+QUERYSETS 
+        • Product.objects.all(): Returns all products
+        • Product.objects.filter(price__gt=Decimal("2.00")): Returns products with a price greater than 2.00
+        • Product.objects.filter(price__lte=Decimal("2.00")): Returns products with a price less than (or equal to) 2.00
+        • Product.objects.exclude(price__gt=Decimal("12.00")): Returns products with a price greater than 12.00
+        • Product.objects.filter(price=Decimal("2.00")): Returns products with a price of exactly 2.00
+        • Product.objects.filter(name__icontains="cathedral"): Returns products with names that contain the word “cathedral” (case insensitive)
+        • ...filter(name__startswith="The", price__gt=Decimal("9.00")): Returns a combination of two clauses with an AND
+
+All the preceding queries are limited to one table. 
+If you need to match on fields that are in other tables,
+ Django offer you a way to build JOINs while querying. 
+ Product.objects.filter(producttag__name="sci-fi") is an example of this. 
+ It will return products that have the tag “sci-fi” associated, and to calculate this it builds two extra JOINs: one with the linking table and another to the tag table.
+
+If you want to build more advanced queries, like OR queries or queries that refer to other fields,
+ you need to use django.db.models.Q objects or django.db.models.F objects.
+Here are some examples:
+        • ...filter(Q(name__startswith="The") | Q(price__gt=Decimal("9.00"))): Returns products whose name starts with “The” OR price is greater than 9.00.
+
+        • ...filter(price__gt=F("price") – 1): Returns products with a price greater than the price itself minus 1. This is a silly example to prove how it works.
+
+
+ MANAGERS 
+ The reason we would want to build our own manager is to add extra methods that return filtered Querysets
+ Given that we have an active filed in the Product model we are going to add a manager with a filter on that
+
+ Re-Migrating or Reversing Migration
+         $ python3 manage.py migrate main 0003_producttag
+Reapply the migration
+        $ python3 manage.py migrate main
+
+Merging Migrations
+To fix merging  migration errors them run 
+        $python manage.py makemigrations --merge'
+
+Starting with an empty migration
+        $ ./manage.py makemigrations main --empty -n productname_capitalize

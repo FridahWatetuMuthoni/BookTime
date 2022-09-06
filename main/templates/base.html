@@ -33,6 +33,11 @@
           >
             <a class="nav-link" href="{% url 'about' %}">About us</a>
           </li>
+          <li
+            class="nav-item {% if request.path == '/contact/' %}active{% endif %}"
+          >
+            <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+          </li>
         </ul>
       </div>
     </nav>
