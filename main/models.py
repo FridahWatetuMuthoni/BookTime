@@ -9,6 +9,11 @@ class ActiveManager(models.Manager):
         return self.filter(active=True)
 
 
+class ProductTagManager(models.Manager):
+    def get_by_natural_key(self, slug):
+        return self.get(slug=slug)
+
+
 class Product(models.Model):
     name = models.CharField(max_length=32)
     description = models.TextField(blank=True)
@@ -17,6 +22,7 @@ class Product(models.Model):
     active = models.BooleanField(default=True)
     in_stock = models.BooleanField(default=True)
     date_updated = models.DateTimeField(auto_now=True)
+    tags = models.ManyToManyField('ProductTag', blank=True)
 
     # This method will be availProduct.objects.active() to return only active products. To finish this
     objects = ActiveManager()
@@ -37,11 +43,15 @@ class ProductImage(models.Model):
 
 class ProductTag(models.Model):
     # One product may have one or many tags, and one tag may contain one or more products
-    products = models.ManyToManyField(Product, blank=True)
-    name = models.CharField(max_length=32)
+    name = models.CharField(max_length=40)
     slug = models.SlugField(max_length=48)
     description = models.TextField(blank=True)
     active = models.BooleanField(default=True)
 
+    objects = ProductTagManager()
+
     def __str__(self):
         return self.name
+
+    def natural_key(self):
+        return (self.slug,)

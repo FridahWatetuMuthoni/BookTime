@@ -135,3 +135,61 @@ To fix merging  migration errors them run
 
 Starting with an empty migration
         $ ./manage.py makemigrations main --empty -n productname_capitalize
+
+MANAGEMENT COMMANDS
+loaddata and dumpdata are very useful as a simple data loading mechanism. 
+They are used to bootstrap a database with data from fixtures, which are simple data files in a format that Django understands.
+They can be JSON or XML and, as long as the structure is what Django dictates, they will be managed without any extra code.
+We are going to leverage the loaddata and dumpdata commands to manage tags.
+Tags will be a fixed set and managed by developers, and the fixture will be committed to the repository. 
+We will also introduce another Django functionality called natural keys.
+We can use Django admin to create those initially.
+ After adding six tags (see Figure 3-8), we will export them with the dumpdata command.
+
+
+
+SERIALIZATION AND NATURAL KEYS
+Serialization, in Django, means converting data stored in a database table to something that can be written to a file. 
+Django supports XML, JSON, and YAML file formats. 
+Deserialization is the opposite operation, going from files to a populated database table.
+Django offers serialization and deserialization facilities through both helper functions and management commands. 
+We will focus on management commands for now. 
+The following is an example of how to use the dumpdata command:
+                $ ./manage.py dumpdata --indent 2 main.ProductTag
+                #using natural keys to avaid database primary keys exposure
+                $ ./manage.py dumpdata --indent 2 --natural-primary main.ProductTag
+
+
+When loading data using natural keys, Django cannot use the natural_ key() method we defined already,
+ because model loading happens through managers, not models themselves. 
+ To be able to load tags back in, we need to create a Manager for that model and implement the get_by_ natural_key() method:
+ To test this we can add some descriptions of tags in the file and reload them. If the data exists already in the database it will be updated
+                $python3 manage.py loaddata main/fixtures/producttags.json
+
+class ProductTagManager(models.Manager):
+        def get_by_natural_key(self, slug):
+                return self.get(slug=slug)
+
+class ProductTag(models.Model):
+        objects = ProductTagManager() 
+
+
+
+IMPORTING DATA WITH A MANAGEMENT COMMAND
+Besides the management commands that are already included,
+ the project can also define new commands. Once created, they are available to be launched using the manage.py script.
+We are going to create an ad hoc command to import products data.
+In order to create a management command, you need to add a file inside main/management/commands/. 
+The file name you choose will be the command name. 
+There will be one management command per file; if you want to create multiple commands, you will need multiple files.
+Every management command can take options: these are parsed with argparse, 
+and Django has some conventions on specifying these as well.
+To start the task of creating a management command, we first need to set up some basic folders:
+                $ mkdir main/management 
+                $ touch main/management/__init__.py
+                 $ mkdir main/management/commands 
+                 $ touch main/management/commands/__init__.py
+These commands will make these folders Python modules, enabling Django to inspect and execute the content of them.
+ Next we will create main/ management/commands/import_data.py, which will contain the importer:
+
+page:91
