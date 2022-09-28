@@ -205,4 +205,4 @@ After opening the CSV file, the script cycles over the rows and tries to load (o
 Once we have a product loaded, we update its tag list by cycling through all the tags in the tags field in the CSV file. Given that CSVs are a flat format, this list need to be expanded from its contracted form (pipe-separated list).
 Once tags are inserted, the script tries to open the image by joining the basedir and the specified file name, with os.path.join(). A new instance of the ProductImage model is created by passing the product and the opened file wrapped in an ImageFile object, which adds extra information about the file.
 
-page:94
+page:109
