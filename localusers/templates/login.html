@@ -1,0 +1,43 @@
+{% extends "./base.html" %} {% block content %}
+<div class="card mx-auto mt-5" style="width:30rem; padding:30px;">
+<h2 class="my-3">Login</h2>
+<p>Please fill the form below.</p>
+<form method="POST"  >
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <!--###############-email-##############-->
+  <div class="form-group my-3">
+    {{ form.email.label_tag }}
+    <input
+      type="email"
+      class="form-control {% if form.email.errors %} is-invalid {% endif %}"
+      name="email"
+      id="id_email"
+      placeholder="Your email"
+      value="{{ form.email.value|default:'' }}"
+    />
+    {% if form.email.errors %}
+    <div class="invalid-feedback">{{ form.email.errors }}</div>
+    {% endif %}
+  </div>
+  <!--###############-end-email-##############-->
+  <!--###############-password-2-##############-->
+  <div class="form-group  my-3">
+    {{ form.password.label_tag }}
+    <input
+     type="password" 
+    class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+    name="password"
+    id="id_password" 
+    value="{{ form.password.value|default:'' }}" >
+     {% if form.password.errors %}
+    <div class="invalid-feedback">{{ form.password.errors }}</div>
+    {% endif %}
+  </div>
+  <!--###############-end-password2-##############-->
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</form>
+</div>
+{% endblock %}
