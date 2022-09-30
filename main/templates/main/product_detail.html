@@ -34,5 +34,6 @@
     <td>{{ object.date_updated|date:"F Y" }}</td>
   </tr>
 </table>
-<a href="/">Add To Bascket</a>
+<a href="{% url "add_to_basket" %}?product_id={{ object.id }}">Add To Bascket</a>
 {% endblock content %}
+

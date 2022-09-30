@@ -58,7 +58,14 @@
     </nav>
     {% for message in messages %}
     <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
+    {% endfor %} {% if request.basket %}
+    <button type="button" class="btn btn-primary mx-5 my-3">
+      Items in Basket
+      <span class="badge text-bg-secondary py-2"
+        >{{ request.basket.count }}</span
+      >
+    </button>
+    {% endif %}
 
     <div class="mx-5">{% block content%} {% endblock %}</div>
     <script src="{% static 'js/jquery.min.js' %}"></script>

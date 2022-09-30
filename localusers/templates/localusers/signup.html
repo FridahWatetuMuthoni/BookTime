@@ -1,10 +1,9 @@
-{% extends "./base.html" %} {% block content %}
+{% extends "../base.html" %} {% block content %}
 <div class="card mx-auto mt-5" style="width:30rem; padding:30px;">
-<h2 class="my-3">Login</h2>
+<h2 class="my-3">Sign up</h2>
 <p>Please fill the form below.</p>
 <form method="POST"  >
   {% csrf_token %}
-  {{ form.non_field_errors }}
   <!--###############-email-##############-->
   <div class="form-group my-3">
     {{ form.email.label_tag }}
@@ -21,17 +20,32 @@
     {% endif %}
   </div>
   <!--###############-end-email-##############-->
+  <!--###############-password-1-##############-->
+  <div class="form-group  my-3">
+    {{ form.password1.label_tag }}
+    <input
+      type="password"
+      class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+      name="password1"
+      id="id_password1"
+      value="{{ form.password1.value|default:'' }}"
+    />
+    {% if form.password1.errors %}
+    <div class="invalid-feedback">{{ form.password1.errors }}</div>
+    {% endif %}
+  </div>
+  <!--###############-end-password-1-##############-->
   <!--###############-password-2-##############-->
   <div class="form-group  my-3">
-    {{ form.password.label_tag }}
+    {{ form.password2.label_tag }}
     <input
      type="password" 
     class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
-    name="password"
-    id="id_password" 
-    value="{{ form.password.value|default:'' }}" >
-     {% if form.password.errors %}
-    <div class="invalid-feedback">{{ form.password.errors }}</div>
+    name="password2"
+    id="id_password2" 
+    value="{{ form.password2.value|default:'' }}" >
+     {% if form.password2.errors %}
+    <div class="invalid-feedback">{{ form.password2.errors }}</div>
     {% endif %}
   </div>
   <!--###############-end-password2-##############-->
